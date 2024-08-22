@@ -335,8 +335,5 @@ constructor(container: HTMLElement, event: IEvents)
 - `button: HTMLButtonElement` - кнопка закрытия окна;
 - `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
 
-Также класс предоставляет следующие методы:
-- `setText(element: HTMLElement, value: string): void` - устанавливает текстовое содержимое элемента.
-
 
 
