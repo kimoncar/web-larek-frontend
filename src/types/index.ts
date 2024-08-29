@@ -17,8 +17,9 @@ export interface IOrder {
 }
 
 export interface IOrderResult {
-    id: string;
-    total: number;
+    id?: string;
+    total?: number;
+    error?: string;
 }
 
 export type TProductCart = Pick<IProduct, 'id' | 'title' | 'price'>;
