@@ -96,7 +96,6 @@ export interface IOrderResult {
 export interface IProductsData {
     items: IProduct[];
     preview: string;
-    event: IEvents;
     getProduct(id: string): IProduct;
 }
 ```
@@ -105,9 +104,8 @@ export interface IProductsData {
 
 ```
 export interface IOrderData {
-    event: IEvents;
     setOrder(orderData: IOrder): void;
-    checkOrderValidation(data: Record<keyof IFormInputsData, string>): boolean;
+    checkValidation(data: Record<keyof IFormInputsData, string>): boolean;
 }
 ```
 

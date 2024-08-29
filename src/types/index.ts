@@ -1,5 +1,3 @@
-import { IEvents } from "../components/base/events";
-
 export interface IProduct {
     id: string;
     title: string;
@@ -9,14 +7,11 @@ export interface IProduct {
     price: number | null;
 }
 
-export interface IForm {
+export interface IOrder {
     payment: string;
     address: string;
     email: string;
     phone: string;
-}
-
-export interface IOrder extends IForm {    
     total: number;
     items: string[];
 }
@@ -26,25 +21,32 @@ export interface IOrderResult {
     total: number;
 }
 
-export type IFormInputsData = Pick<IOrder, 'address' | 'email' | 'phone'>;
+export type TProductCart = Pick<IProduct, 'id' | 'title' | 'price'>;
+export type TFormOrder = Pick<IOrder, 'address' | 'payment'>;
+export type TFormContacts = Pick<IOrder, 'email' | 'phone'>;
+export type TFormInputsData = Pick<IOrder, 'address' | 'email' | 'phone'>;
+
+export type TFormErrors = Partial<Record<keyof TFormInputsData, string>>;
 
 export interface IProductsData {
     items: IProduct[];
-    preview: string;
-    event: IEvents;
+    preview: string | null;
     getProduct(id: string): IProduct;
 }
 
-export interface IOrderData {
-    event: IEvents;
-    setOrder(orderData: IOrder): void;
-    checkOrderValidation(data: Record<keyof IFormInputsData, string>): boolean;
+export interface IOrderData{
+    setFormOrder(data: Record<keyof TFormOrder, string>): void;
+    setFormContacts(data: Record<keyof TFormContacts, string>): void;
+    checkValidationFormOrder(): boolean;
+    checkValidationFormContacts(): boolean;
+    clearOrder(): void;
 }
 
 export interface ICartData {
-    items: Map<string, number>;
-    addProduct(id: string): void;
-    removeProduct(id: string): void;
+    items: TProductCart[];
+    addProduct(item: TProductCart): void;
+    removeProduct(item: TProductCart): void;
     getTotal(): number;
     getSumm(): number;
+    clearCart(): void;
 }
