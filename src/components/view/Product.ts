@@ -23,6 +23,7 @@ export class Product extends Component<IProduct> {
     constructor(container: HTMLElement, events: IEvents) {
         super(container);
         this.events = events;
+        this.container = container;
 
         this._title = this.container.querySelector('.card__title');
         this._image = this.container.querySelector('.card__image');
@@ -37,7 +38,7 @@ export class Product extends Component<IProduct> {
                     this.events.emit('cartItem:add', { card: this })
                 })
             } else {
-                this.button.addEventListener('click', () => {
+                this.container.addEventListener('click', () => {
                     this.events.emit('product:preview', { card: this })
                 })
             }
