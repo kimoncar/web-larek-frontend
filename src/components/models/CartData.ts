@@ -1,5 +1,5 @@
-import { ICartData, TProductCart } from "../types";
-import { IEvents } from "./base/events";
+import { ICartData, TProductCart } from "../../types";
+import { IEvents } from "../base/events";
 
 export class CartData implements ICartData {
     items: TProductCart[];

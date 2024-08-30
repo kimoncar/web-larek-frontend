@@ -1,5 +1,5 @@
-import { IProduct, IProductsData } from "../types";
-import { IEvents } from "./base/events";
+import { IProduct, IProductsData } from "../../types";
+import { IEvents } from "../base/events";
 
 
 export class ProductsData implements IProductsData {
@@ -29,7 +29,7 @@ export class ProductsData implements IProductsData {
             this._preview = null;
             return;
         }
-
+        
         const selectedProduct = this.getProduct(id);
         if (selectedProduct) {
             this._preview = id;

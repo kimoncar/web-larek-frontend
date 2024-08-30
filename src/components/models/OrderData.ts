@@ -1,5 +1,5 @@
-import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors } from "../types";
-import { IEvents } from "./base/events";
+import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors } from "../../types";
+import { IEvents } from "../base/events";
 
 export class OrderData implements IOrderData {
     protected events: IEvents;
