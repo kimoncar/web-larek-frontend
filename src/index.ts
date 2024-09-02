@@ -65,6 +65,7 @@ events.on('modalProduct:open', (productItem: IProduct) => {
     events,
     {onClick: () => events.emit('cartItem:add', productItemCart)} 
   );
+
   modalContainer.content = productPreview.render(productItem);
   modalContainer.render();
 });
@@ -79,7 +80,6 @@ events.on('cartItem:remove', (productItemCart: TProductCart) => {
 });
 
 events.on('cart:change', (items: TProductCart[]) => {
-  console.log(items);
   cart.items = items.map((item, index) => {
     const productCartInstant = new Product(
       cloneTemplate(productCartTemplate),
@@ -91,6 +91,7 @@ events.on('cart:change', (items: TProductCart[]) => {
   const totalSummCart = cartData.getSumm();
   cart.totalSumm = totalSummCart;
   cart.toggleButton(totalSummCart === 0);
+  page.cartCounter = cartData.getTotal();
   //TODO: общую сумму и колличество передать в заказ!
 });
 
