@@ -2,6 +2,10 @@ import { IProduct } from "../../types";
 import { IEvents } from "../base/events";
 import { Component } from "./Component";
 
+export interface IActions {
+    onClick: (event: MouseEvent) => void;
+}
+
 export class Product extends Component<IProduct> {
     protected events: IEvents;
     protected _title: HTMLElement;
@@ -11,6 +15,7 @@ export class Product extends Component<IProduct> {
     protected _description?: HTMLElement;
     protected button?: HTMLButtonElement;
     protected cardId: string;
+    protected actions?: IActions;
 
     protected classesCategory = <Record<string, string>>{
         "дополнительное": "card__category_additional",
@@ -20,7 +25,7 @@ export class Product extends Component<IProduct> {
         "хард-скил": "card__category_hard"        
       }
 
-    constructor(container: HTMLElement, events: IEvents) {
+    constructor(container: HTMLElement, events: IEvents, actions?: IActions) {
         super(container);
         this.events = events;
 
@@ -31,15 +36,11 @@ export class Product extends Component<IProduct> {
         this._description = this.container.querySelector('.card__text');
         this.button = this.container.querySelector('.card__button');
 
-        if (this._image) {
+        if (actions.onClick) {
             if (this.button) {
-                this.button.addEventListener('click', () => {
-                    this.events.emit('cartItem:add', this)
-                })
+                this.button.addEventListener('click', actions.onClick);
             } else {
-                this.container.addEventListener('click', () => {
-                    this.events.emit('product:select', this)
-                })
+                this.container.addEventListener('click', actions.onClick);
             }
         }
     }

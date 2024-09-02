@@ -26,7 +26,7 @@ export class ProductsData implements IProductsData {
 
     set preview(id: string) {
         this._preview = id;
-        this.events.emit('modalProduct:open', this.getProduct(id))
+        this.events.emit('modalProduct:open', this.getProduct(id));
     }
 
     get preview() {
