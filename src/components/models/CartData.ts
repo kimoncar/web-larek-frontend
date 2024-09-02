@@ -8,10 +8,12 @@ export class CartData implements ICartData {
     constructor (events: IEvents) {
         this.events = events;
         this.items = [];
+        this.events.emit('cart:change', this.items);
     }
 
     addProduct(item: TProductCart): void {
         this.items.push(item);
+        this.events.emit('cart:change', this.items);
     }
 
     removeProduct(item: TProductCart): void {
@@ -19,6 +21,7 @@ export class CartData implements ICartData {
         if (index >= 0) {
             this.items.splice(index, 1);
         }
+        this.events.emit('cart:change', this.items);
     }
 
     getTotal(): number {

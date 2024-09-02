@@ -14,7 +14,8 @@ export class Product extends Component<IProduct> {
     protected _category?: HTMLElement;
     protected _description?: HTMLElement;
     protected button?: HTMLButtonElement;
-    protected cardId: string;
+    //protected productId: string;
+    protected _index?: HTMLElement;
     protected actions?: IActions;
 
     protected classesCategory = <Record<string, string>>{
@@ -35,6 +36,7 @@ export class Product extends Component<IProduct> {
         this._category = this.container.querySelector('.card__category');
         this._description = this.container.querySelector('.card__text');
         this.button = this.container.querySelector('.card__button');
+        this._index = this.container.querySelector('.basket__item-index');
 
         if (actions.onClick) {
             if (this.button) {
@@ -45,12 +47,14 @@ export class Product extends Component<IProduct> {
         }
     }
 
+    /*
     set id(_id) {
-		this.cardId = _id;
+		this.productId = _id;
 	}
 	get id() {
-		return this.cardId;
+		return this.productId;
 	}
+    */
 
     set title(value: string) {
         this.setText(this._title, value);
@@ -84,6 +88,10 @@ export class Product extends Component<IProduct> {
         if (this._description) {
             this.setText(this._description, value);
         }
+    }
+
+    set index(value: string) {
+        this.setText(this._index, value);
     }
 
     setButtonText(value: string) {

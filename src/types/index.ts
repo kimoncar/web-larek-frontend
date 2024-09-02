@@ -5,6 +5,7 @@ export interface IProduct {
     description?: string;
     image: string;
     price: number | null;
+    index?: string;
 }
 
 export interface IOrder {
