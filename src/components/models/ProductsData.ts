@@ -4,7 +4,7 @@ import { IEvents } from "../base/events";
 
 export class ProductsData implements IProductsData {
     protected _items: IProduct[];
-    protected _preview: string | null;
+    protected _preview: string;
     protected events: IEvents;
 
     constructor(events: IEvents) {
@@ -24,17 +24,9 @@ export class ProductsData implements IProductsData {
         return this._items.find((item) => item.id === id);
     }
 
-    set preview(id: string | null) {
-        if (!id) {
-            this._preview = null;
-            return;
-        }
-        
-        const selectedProduct = this.getProduct(id);
-        if (selectedProduct) {
-            this._preview = id;
-            this.events.emit('products:preview');
-        }
+    set preview(id: string) {
+        this._preview = id;
+        this.events.emit('modalProduct:open', this.getProduct(id))
     }
 
     get preview() {

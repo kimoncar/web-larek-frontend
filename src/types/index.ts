@@ -31,7 +31,7 @@ export type TFormErrors = Partial<Record<keyof TFormInputsData, string>>;
 
 export interface IProductsData {
     items: IProduct[];
-    preview: string | null;
+    preview: string;
     getProduct(id: string): IProduct;
 }
 

@@ -10,7 +10,6 @@ export class Page extends Component<IPage> {
 
     constructor(container: HTMLElement) {
         super(container);
-        this.container = container;
     }
 
     set catalog(items: HTMLElement[]) {

@@ -1,7 +1,5 @@
 export abstract class Component<T> {
-    protected readonly container: HTMLElement;
-
-    constructor(container: HTMLElement) {}
+    constructor(protected readonly container: HTMLElement) {}
 
     setText(element: HTMLElement, value: unknown):void {
         if (element) {

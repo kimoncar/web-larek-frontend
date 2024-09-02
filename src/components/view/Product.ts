@@ -4,13 +4,13 @@ import { Component } from "./Component";
 
 export class Product extends Component<IProduct> {
     protected events: IEvents;
-    protected container: HTMLElement;
     protected _title: HTMLElement;
     protected _image?: HTMLImageElement;
     protected _price: HTMLElement;
     protected _category?: HTMLElement;
     protected _description?: HTMLElement;
     protected button?: HTMLButtonElement;
+    protected cardId: string;
 
     protected classesCategory = <Record<string, string>>{
         "дополнительное": "card__category_additional",
@@ -23,7 +23,6 @@ export class Product extends Component<IProduct> {
     constructor(container: HTMLElement, events: IEvents) {
         super(container);
         this.events = events;
-        this.container = container;
 
         this._title = this.container.querySelector('.card__title');
         this._image = this.container.querySelector('.card__image');
@@ -35,15 +34,22 @@ export class Product extends Component<IProduct> {
         if (this._image) {
             if (this.button) {
                 this.button.addEventListener('click', () => {
-                    this.events.emit('cartItem:add', { card: this })
+                    this.events.emit('cartItem:add', this)
                 })
             } else {
                 this.container.addEventListener('click', () => {
-                    this.events.emit('product:preview', { card: this })
+                    this.events.emit('product:select', this)
                 })
             }
         }
     }
+
+    set id(_id) {
+		this.cardId = _id;
+	}
+	get id() {
+		return this.cardId;
+	}
 
     set title(value: string) {
         this.setText(this._title, value);
