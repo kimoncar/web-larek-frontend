@@ -38,11 +38,16 @@ export class Cart extends Component<ICartView> {
     }
 
     set items(items: HTMLElement[]) {
+        this._items = items;
         if (items.length) {
             this.cartList.replaceChildren(...items);
         } else {
             this.emptyCart();
         }
+    }
+
+    get items(): HTMLElement[]{
+        return this._items;
     }
 
     toggleButton(value: boolean): void {

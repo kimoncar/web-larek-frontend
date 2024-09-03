@@ -28,7 +28,7 @@ const page = new Page(document.body, events);
 const modalContainer = new Modal(document.querySelector('#modal-container'), events);
 const cart = new Cart(cloneTemplate(cartTemplate), events);
 
-// Получаем товары с сервера
+// Получение товаров с сервера
 api.getProducts()
   .then(function (data: IProduct[]) {
     productsData.items = data;
@@ -66,6 +66,11 @@ events.on('modalProduct:open', (productItem: IProduct) => {
     {onClick: () => events.emit('cartItem:add', productItemCart)} 
   );
 
+  if (cartData.items.find((item) => item.id === productItem.id)) {
+    productPreview.disabledButton(null);
+    productPreview.setButtonText('Уже в корзине');
+  }
+
   modalContainer.content = productPreview.render(productItem);
   modalContainer.render();
 });
@@ -86,8 +91,12 @@ events.on('cart:change', (items: TProductCart[]) => {
       events,
       {onClick: () => events.emit('cartItem:remove', item)}
     );
-    return productCartInstant.render({...item, index: (index+1).toString()});
+    return productCartInstant.render({
+      ...item,
+      index: (index+1).toString()
+    });
   });
+
   const totalSummCart = cartData.getSumm();
   cart.totalSumm = totalSummCart;
   cart.toggleButton(totalSummCart === 0);
