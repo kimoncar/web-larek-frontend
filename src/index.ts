@@ -114,6 +114,9 @@ events.on('modalCart:open', () => {
   modalContainer.render();
 });
 
+// Открыть модалку оформления заказа
+
+
 
 
 
