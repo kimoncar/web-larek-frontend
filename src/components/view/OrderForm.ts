@@ -1,23 +1,23 @@
 import { TFormOrder } from "../../types";
 import { IEvents } from "../base/events";
-import { Component } from "./Component";
+import { Form } from "./Form";
 import { IActions } from "./Product";
 
-export class OrderForm extends Component<TFormOrder> {
+export class OrderForm extends Form<TFormOrder> {
     protected _buttonPaymentOnline: HTMLButtonElement;
     protected _buttonPaymentCash: HTMLButtonElement;
     protected _itemAddress: HTMLInputElement;
     protected events: IEvents;
     protected actions?: IActions;
 
-    constructor(container: HTMLElement, events: IEvents, actions?: IActions) {
-        super(container);
+    constructor(container: HTMLFormElement, events: IEvents, actions?: IActions) {
+        super(container, events);
         this.events = events;
 
         this._buttonPaymentOnline = this.container.querySelector('button[name=online]');
         this._buttonPaymentCash = this.container.querySelector('button[name=cash]');       
 
-        if(actions.onClick) {
+        if(actions?.onClick) {
             this._buttonPaymentOnline.addEventListener('click', actions.onClick);
             this._buttonPaymentCash.addEventListener('click', actions.onClick);
         }

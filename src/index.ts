@@ -5,6 +5,7 @@ import { CartData } from './components/models/CartData';
 import { ProductsData } from './components/models/ProductsData';
 import { Cart } from './components/view/Cart';
 import { Modal } from './components/view/Modal';
+import { OrderForm } from './components/view/OrderForm';
 import { Page } from './components/view/Page';
 import { Product } from './components/view/Product';
 import './scss/styles.scss';
@@ -23,10 +24,16 @@ const productCatalogTemplate: HTMLTemplateElement = document.querySelector('#car
 const productPreviewTemplate: HTMLTemplateElement = document.querySelector('#card-preview');
 const productCartTemplate: HTMLTemplateElement = document.querySelector('#card-basket');
 const cartTemplate: HTMLTemplateElement = document.querySelector('#basket');
+const orderFormTemplate: HTMLTemplateElement = document.querySelector('#order');
 
 const page = new Page(document.body, events);
 const modalContainer = new Modal(document.querySelector('#modal-container'), events);
 const cart = new Cart(cloneTemplate(cartTemplate), events);
+const orderForm = new OrderForm(
+  cloneTemplate(orderFormTemplate),
+  events,
+  {onClick: (evt: Event) => events.emit('payment:change', evt.target)}
+);
 
 // Получить товары с сервера
 api.getProducts()
@@ -115,6 +122,17 @@ events.on('modalCart:open', () => {
 });
 
 // Открыть модалку оформления заказа
+events.on('orderForm:open', () => {
+  modalContainer.content = orderForm.render();
+  modalContainer.render();
+});
+
+// Переключить способ оплаты
+events.on('payment:change', (button: HTMLButtonElement) => {
+  orderForm.togglePaymentButton();
+  console.log(button.getAttribute('name'));
+  //TODO: способ оплаты передать в заказ!
+});
 
 
 
