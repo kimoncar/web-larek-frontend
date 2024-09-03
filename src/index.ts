@@ -2,14 +2,17 @@ import { AppApi } from './components/AppApis';
 import { Api } from './components/base/api';
 import { EventEmitter } from './components/base/events';
 import { CartData } from './components/models/CartData';
+import { OrderData } from './components/models/OrderData';
 import { ProductsData } from './components/models/ProductsData';
 import { Cart } from './components/view/Cart';
+import { ContactsForm } from './components/view/ContactsForm';
+import { Form } from './components/view/Form';
 import { Modal } from './components/view/Modal';
 import { OrderForm } from './components/view/OrderForm';
 import { Page } from './components/view/Page';
 import { Product } from './components/view/Product';
 import './scss/styles.scss';
-import { IApi, IProduct, TProductCart } from './types';
+import { IApi, IProduct, TFormContacts, TFormErrors, TProductCart } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
 
@@ -19,12 +22,14 @@ const baseApi: IApi = new Api(API_URL, settings);
 const api = new AppApi(CDN_URL, baseApi);
 const productsData = new ProductsData(events);
 const cartData = new CartData(events);
+const orderData = new OrderData(events);
 
 const productCatalogTemplate: HTMLTemplateElement = document.querySelector('#card-catalog');
 const productPreviewTemplate: HTMLTemplateElement = document.querySelector('#card-preview');
 const productCartTemplate: HTMLTemplateElement = document.querySelector('#card-basket');
 const cartTemplate: HTMLTemplateElement = document.querySelector('#basket');
 const orderFormTemplate: HTMLTemplateElement = document.querySelector('#order');
+const contactsFormTemplate: HTMLTemplateElement = document.querySelector('#contacts');
 
 const page = new Page(document.body, events);
 const modalContainer = new Modal(document.querySelector('#modal-container'), events);
@@ -34,6 +39,7 @@ const orderForm = new OrderForm(
   events,
   {onClick: (evt: Event) => events.emit('payment:change', evt.target)}
 );
+const contactsForm = new ContactsForm(cloneTemplate(contactsFormTemplate), events);
 
 // Получить товары с сервера
 api.getProducts()
@@ -127,14 +133,37 @@ events.on('orderForm:open', () => {
   modalContainer.render();
 });
 
+// Открыть модалку оформления контактов
+events.on('orderForm:submit', () => {
+  modalContainer.content = contactsForm.render();
+  modalContainer.render();
+});
+
 // Переключить способ оплаты
 events.on('payment:change', (button: HTMLButtonElement) => {
   orderForm.togglePaymentButton();
-  console.log(button.getAttribute('name'));
   //TODO: способ оплаты передать в заказ!
+  //orderData.setFormOrder
 });
 
+// Изменить значение адреса
+events.on('orderForm:change', (data: {field: keyof TFormErrors, value: string}) => {
+  orderData.setFormOrder(data.field, data.value);
+});
 
+// Изменить значения email и телефона
+events.on('contactsForm:change', (data: {field: keyof TFormErrors, value: string}) => {
+  orderData.setFormContacts(data.field, data.value);
+});
+
+// Проверить валидацию форм
+events.on('formError:change', (errors: TFormErrors) => {
+  const {address, email, phone} = errors;
+  orderForm.valid = !address;
+  contactsForm.valid = !email && !phone;
+  orderForm.errors = Object.values({address}).filter(i => !!i).join('; ');
+  contactsForm.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
+});
 
 
 

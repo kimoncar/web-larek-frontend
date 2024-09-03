@@ -6,7 +6,7 @@ import { IActions } from "./Product";
 export class OrderForm extends Form<TFormOrder> {
     protected _buttonPaymentOnline: HTMLButtonElement;
     protected _buttonPaymentCash: HTMLButtonElement;
-    protected _itemAddress: HTMLInputElement;
+    protected inputAddress: HTMLInputElement;
     protected events: IEvents;
     protected actions?: IActions;
 
@@ -28,9 +28,5 @@ export class OrderForm extends Form<TFormOrder> {
     togglePaymentButton():void {
         this._buttonPaymentCash.classList.toggle('button_alt-active');
         this._buttonPaymentOnline.classList.toggle('button_alt-active');
-    }
-
-    set address(value: string) {
-        this._itemAddress.value = value;
     }
 }

@@ -37,8 +37,8 @@ export interface IProductsData {
 }
 
 export interface IOrderData{
-    setFormOrder(data: Record<keyof TFormOrder, string>): void;
-    setFormContacts(data: Record<keyof TFormContacts, string>): void;
+    setFormOrder(field: keyof TFormInputsData, value: string): void;
+    setFormContacts(field: keyof TFormInputsData, value: string): void;
     checkValidationFormOrder(): boolean;
     checkValidationFormContacts(): boolean;
     clearOrder(): void;

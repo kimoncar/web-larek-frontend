@@ -1,4 +1,4 @@
-import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors } from "../../types";
+import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors, TFormInputsData } from "../../types";
 import { IEvents } from "../base/events";
 
 export class OrderData implements IOrderData {
@@ -17,17 +17,15 @@ export class OrderData implements IOrderData {
         this.events = events;
     }
 
-    setFormOrder(data: Record<keyof TFormOrder, string>): void {
-        this.order.payment = data.payment;
-        this.order.address = data.address;
+    setFormOrder(field: keyof TFormInputsData, value: string): void {
+        this.order[field] = value;
         if (this.checkValidationFormOrder()) {
             this.events.emit('formError:done', this.order);
         }
     }
 
-    setFormContacts(data: TFormContacts): void {
-        this.order.email = data.email;
-        this.order.phone = data.phone;
+    setFormContacts(field: keyof TFormInputsData, value: string): void {
+        this.order[field] = value;
         if (this.checkValidationFormContacts()) {
             this.events.emit('formError:done', this.order);
         }
@@ -38,7 +36,7 @@ export class OrderData implements IOrderData {
         if (!this.order.address) {
             this.formErrors.address = "Укажите ваш адрес";
         }
-        this.events.emit('formError:changed', this.formErrors);
+        this.events.emit('formError:change', this.formErrors);
         return Object.keys(this.formErrors).length === 0;
     }
 
@@ -50,7 +48,7 @@ export class OrderData implements IOrderData {
         if (!this.order.phone) {
             this.formErrors.email = "Укажите ваш телефон";
         }
-        this.events.emit('formError:changed', this.formErrors);
+        this.events.emit('formError:change', this.formErrors);
         return Object.keys(this.formErrors).length === 0;
     }
 
