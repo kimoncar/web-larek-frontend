@@ -28,7 +28,7 @@ const page = new Page(document.body, events);
 const modalContainer = new Modal(document.querySelector('#modal-container'), events);
 const cart = new Cart(cloneTemplate(cartTemplate), events);
 
-// Получение товаров с сервера
+// Получить товары с сервера
 api.getProducts()
   .then(function (data: IProduct[]) {
     productsData.items = data;
@@ -36,7 +36,7 @@ api.getProducts()
   })
   .catch(error => console.log(error));
 
-// Заполнение каталога товаров
+// Заполненить каталог товаров на странице
 events.on('initialData:loaded', () => {
   const productsArray = productsData.items.map((item) => {
     const productInstant = new Product(
@@ -46,10 +46,11 @@ events.on('initialData:loaded', () => {
     );
     return productInstant.render(item);
   });
-  
+
   page.catalog = productsArray;
 });
 
+// Открыть модалку с описанием товара
 events.on('product:select', (productItem: IProduct) => {
   productsData.preview = productItem.id;
 });
@@ -75,15 +76,18 @@ events.on('modalProduct:open', (productItem: IProduct) => {
   modalContainer.render();
 });
 
+// Добавить товар в корзину
 events.on('cartItem:add', (productItemCart: TProductCart) => {
   cartData.addProduct(productItemCart);
   modalContainer.close();
 });
 
+// Удалить товар из корзины
 events.on('cartItem:remove', (productItemCart: TProductCart) => {
   cartData.removeProduct(productItemCart);
 });
 
+// Обновить список товаров в корзине, общую сумму и счетчик в шапке
 events.on('cart:change', (items: TProductCart[]) => {
   cart.items = items.map((item, index) => {
     const productCartInstant = new Product(
@@ -104,6 +108,7 @@ events.on('cart:change', (items: TProductCart[]) => {
   //TODO: общую сумму и колличество передать в заказ!
 });
 
+// Открыть модалку корзины
 events.on('modalCart:open', () => {
   modalContainer.content = cart.render();
   modalContainer.render();
@@ -112,12 +117,12 @@ events.on('modalCart:open', () => {
 
 
 
-// Модальное окно открыто
+// Заблокировать скрол страницы при открытии модалки
 events.on('modal:open', () => {
   page.locked = true;
 });
 
-// Модальное окно закрыто
+// Раблокировать скролл страницы при открытии модалки
 events.on('modal:close', () => {
   page.locked = false;
 });
