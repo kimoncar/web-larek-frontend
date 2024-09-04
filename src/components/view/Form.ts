@@ -44,4 +44,8 @@ export class Form<T> extends Component<IForm> {
     set errors(value: string) {
         this.setText(this._errors, value);
     }
+
+    clearForm() {
+        this.container.reset();
+    }
 }

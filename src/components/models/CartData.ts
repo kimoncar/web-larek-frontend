@@ -37,6 +37,7 @@ export class CartData implements ICartData {
 
     clearCart() {
         this._items = [];
+        this.events.emit('cart:change', this._items);
     }
 
     get items() {

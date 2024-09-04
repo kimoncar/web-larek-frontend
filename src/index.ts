@@ -184,7 +184,12 @@ events.on('contactsForm:submit', () => {
   api.postOrder(order)
   .then(function (data: IOrderResult) {
     cartData.clearCart();
+
     orderData.clearFormsData();
+    orderForm.clearForm();
+    contactsForm.clearForm();
+    
+    console.log(cartData);
     events.emit('order:success', data);
   })
   .catch(error => console.log(error));
@@ -192,7 +197,9 @@ events.on('contactsForm:submit', () => {
 
 // Открыть модалку с результатом заказа
 events.on('order:success', (data: IOrderResult) => {
-
+  success.description = data.total;
+  modalContainer.content = success.render();
+  modalContainer.render();  
 })
 
 
