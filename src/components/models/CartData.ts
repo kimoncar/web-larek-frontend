@@ -2,40 +2,44 @@ import { ICartData, TProductCart } from "../../types";
 import { IEvents } from "../base/events";
 
 export class CartData implements ICartData {
-    items: TProductCart[];
+    _items: TProductCart[];
     events: IEvents;
 
     constructor (events: IEvents) {
         this.events = events;
-        this.items = [];
-        this.events.emit('cart:change', this.items);
+        this._items = [];
+        this.events.emit('cart:change', this._items);
     }
 
     addProduct(item: TProductCart): void {
-        this.items.push(item);
-        this.events.emit('cart:change', this.items);
+        this._items.push(item);
+        this.events.emit('cart:change', this._items);
     }
 
     removeProduct(item: TProductCart): void {
-        const index = this.items.indexOf(item);
+        const index = this._items.indexOf(item);
         if (index >= 0) {
-            this.items.splice(index, 1);
+            this._items.splice(index, 1);
         }
-        this.events.emit('cart:change', this.items);
+        this.events.emit('cart:change', this._items);
     }
 
     getTotal(): number {
-        return this.items.length;
+        return this._items.length;
     }
 
     getSumm(): number {
-        const totalSumm = this.items.reduce((summ, item) => {
+        const totalSumm = this._items.reduce((summ, item) => {
             return summ += item.price;
         }, 0);
         return totalSumm;
     }
 
     clearCart() {
-        this.items = [];
+        this._items = [];
+    }
+
+    get items() {
+        return this._items;
     }
 }

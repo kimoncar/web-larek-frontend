@@ -8,11 +8,14 @@ export interface IProduct {
     index?: string;
 }
 
-export interface IOrder {
+export interface IFormsData {
     payment: string;
     address: string;
     email: string;
     phone: string;
+}
+
+export interface IOrder extends IFormsData{
     total: number;
     items: string[];
 }
@@ -41,7 +44,7 @@ export interface IOrderData{
     setFormContacts(field: keyof TFormInputsData, value: string): void;
     checkValidationFormOrder(): boolean;
     checkValidationFormContacts(): boolean;
-    clearOrder(): void;
+    clearFormsData(): void;
 }
 
 export interface ICartData {

@@ -11,8 +11,9 @@ import { Modal } from './components/view/Modal';
 import { OrderForm } from './components/view/OrderForm';
 import { Page } from './components/view/Page';
 import { Product } from './components/view/Product';
+import { Success } from './components/view/Success';
 import './scss/styles.scss';
-import { IApi, IProduct, TFormContacts, TFormErrors, TProductCart } from './types';
+import { IApi, IOrder, IOrderResult, IProduct, TFormContacts, TFormErrors, TProductCart } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
 
@@ -30,6 +31,7 @@ const productCartTemplate: HTMLTemplateElement = document.querySelector('#card-b
 const cartTemplate: HTMLTemplateElement = document.querySelector('#basket');
 const orderFormTemplate: HTMLTemplateElement = document.querySelector('#order');
 const contactsFormTemplate: HTMLTemplateElement = document.querySelector('#contacts');
+const successTemplate: HTMLTemplateElement = document.querySelector('#success');
 
 const page = new Page(document.body, events);
 const modalContainer = new Modal(document.querySelector('#modal-container'), events);
@@ -40,6 +42,10 @@ const orderForm = new OrderForm(
   {onClick: (evt: Event) => events.emit('payment:change', evt.target)}
 );
 const contactsForm = new ContactsForm(cloneTemplate(contactsFormTemplate), events);
+const success = new Success(
+  cloneTemplate(successTemplate),
+  {onClick: () => modalContainer.close()}
+);
 
 // Получить товары с сервера
 api.getProducts()
@@ -118,7 +124,6 @@ events.on('cart:change', (items: TProductCart[]) => {
   cart.totalSumm = totalSummCart;
   cart.toggleButton(totalSummCart === 0);
   page.cartCounter = cartData.getTotal();
-  //TODO: общую сумму и колличество передать в заказ!
 });
 
 // Открыть модалку корзины
@@ -142,8 +147,7 @@ events.on('orderForm:submit', () => {
 // Переключить способ оплаты
 events.on('payment:change', (button: HTMLButtonElement) => {
   orderForm.togglePaymentButton();
-  //TODO: способ оплаты передать в заказ!
-  //orderData.setFormOrder
+  orderData.setFormOrder('payment', button.name);
 });
 
 // Изменить значение адреса
@@ -165,6 +169,31 @@ events.on('formError:change', (errors: TFormErrors) => {
   contactsForm.errors = Object.values({phone, email}).filter(i => !!i).join('; ');
 });
 
+// Отправить заказ
+events.on('contactsForm:submit', () => {
+  const formsData = orderData.formsData;
+  const order = {
+    payment: formsData.payment,
+    address: formsData.address,
+    email: formsData.email,
+    phone: formsData.phone,
+    items: cartData.items.map((item) => {return item.id}),
+    total: cartData.getSumm()
+  };
+
+  api.postOrder(order)
+  .then(function (data: IOrderResult) {
+    cartData.clearCart();
+    orderData.clearFormsData();
+    events.emit('order:success', data);
+  })
+  .catch(error => console.log(error));
+});
+
+// Открыть модалку с результатом заказа
+events.on('order:success', (data: IOrderResult) => {
+
+})
 
 
 // Заблокировать скрол страницы при открытии модалки

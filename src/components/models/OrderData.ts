@@ -1,15 +1,13 @@
-import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors, TFormInputsData } from "../../types";
+import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors, TFormInputsData, IFormsData } from "../../types";
 import { IEvents } from "../base/events";
 
 export class OrderData implements IOrderData {
     protected events: IEvents;
-    protected order: IOrder = {
+    protected _formsData: IFormsData = {
         payment: 'online',
         address: '',
         email: '',
         phone: '',
-        total: 0,
-        items: []
     };
     protected formErrors: TFormErrors;
 
@@ -17,23 +15,23 @@ export class OrderData implements IOrderData {
         this.events = events;
     }
 
-    setFormOrder(field: keyof TFormInputsData, value: string): void {
-        this.order[field] = value;
+    setFormOrder(field: keyof IFormsData, value: string): void {
+        this._formsData[field] = value;
         if (this.checkValidationFormOrder()) {
-            this.events.emit('formError:done', this.order);
+            this.events.emit('formError:done', this._formsData);
         }
     }
 
-    setFormContacts(field: keyof TFormInputsData, value: string): void {
-        this.order[field] = value;
+    setFormContacts(field: keyof IFormsData, value: string): void {
+        this._formsData[field] = value;
         if (this.checkValidationFormContacts()) {
-            this.events.emit('formError:done', this.order);
+            this.events.emit('formError:done', this._formsData);
         }
     }
 
     checkValidationFormOrder(): boolean {
         this.formErrors = {};
-        if (!this.order.address) {
+        if (!this._formsData.address) {
             this.formErrors.address = "Укажите ваш адрес";
         }
         this.events.emit('formError:change', this.formErrors);
@@ -42,26 +40,27 @@ export class OrderData implements IOrderData {
 
     checkValidationFormContacts(): boolean {
         this.formErrors = {};
-        if (!this.order.email) {
+        if (!this._formsData.email) {
             this.formErrors.email = "Укажите ваш email";
         }
-        if (!this.order.phone) {
+        if (!this._formsData.phone) {
             this.formErrors.email = "Укажите ваш телефон";
         }
         this.events.emit('formError:change', this.formErrors);
         return Object.keys(this.formErrors).length === 0;
     }
 
-    clearOrder(): void {
-        this.order = {
+    clearFormsData(): void {
+        this._formsData = {
             payment: 'online',
             address: '',
             email: '',
-            phone: '',
-            total: 0,
-            items: []
+            phone: ''
         }
     }
 
+    get formsData() {
+        return this._formsData;
+    }
     
 }
