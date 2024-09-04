@@ -1,6 +1,6 @@
 import { TFormContacts } from "../../types";
 import { IEvents } from "../base/events";
-import { Form } from "./Form";
+import { Form } from "./common/Form";
 
 export class ContactsForm extends Form<TFormContacts> {
     protected events: IEvents;

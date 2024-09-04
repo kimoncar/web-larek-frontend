@@ -1,6 +1,6 @@
 import { TFormOrder } from "../../types";
 import { IEvents } from "../base/events";
-import { Form } from "./Form";
+import { Form } from "./common/Form";
 import { IActions } from "./Product";
 
 export class OrderForm extends Form<TFormOrder> {

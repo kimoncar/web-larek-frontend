@@ -1,6 +1,6 @@
 import { IProduct } from "../../types";
 import { IEvents } from "../base/events";
-import { Component } from "./Component";
+import { Component } from "./common/Component";
 
 export interface IActions {
     onClick: (event: MouseEvent) => void;
@@ -14,7 +14,6 @@ export class Product extends Component<IProduct> {
     protected _category?: HTMLElement;
     protected _description?: HTMLElement;
     protected button?: HTMLButtonElement;
-    //protected productId: string;
     protected _index?: HTMLElement;
     protected actions?: IActions;
 
@@ -46,15 +45,6 @@ export class Product extends Component<IProduct> {
             }
         }
     }
-
-    /*
-    set id(_id) {
-		this.productId = _id;
-	}
-	get id() {
-		return this.productId;
-	}
-    */
 
     set title(value: string) {
         this.setText(this._title, value);

@@ -1,5 +1,5 @@
 import { IEvents } from "../base/events";
-import { Component } from "./Component";
+import { Component } from "./common/Component";
 
 interface IPage {
     _catalog: HTMLElement[];

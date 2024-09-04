@@ -1,6 +1,6 @@
 import { createElement } from "../../utils/utils";
 import { IEvents } from "../base/events";
-import { Component } from "./Component";
+import { Component } from "./common/Component";
 
 export interface ICartView {
     cartList: HTMLElement;

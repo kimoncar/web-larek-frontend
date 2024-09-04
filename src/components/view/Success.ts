@@ -1,5 +1,5 @@
 import { IOrderResult } from "../../types";
-import { Component } from "./Component";
+import { Component } from "./common/Component";
 import { IActions } from "./Product";
 
 export class Success extends Component<IOrderResult> {
