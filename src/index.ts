@@ -6,14 +6,13 @@ import { OrderData } from './components/models/OrderData';
 import { ProductsData } from './components/models/ProductsData';
 import { Cart } from './components/view/Cart';
 import { ContactsForm } from './components/view/ContactsForm';
-import { Form } from './components/view/Form';
 import { Modal } from './components/view/Modal';
 import { OrderForm } from './components/view/OrderForm';
 import { Page } from './components/view/Page';
 import { Product } from './components/view/Product';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
-import { IApi, IOrder, IOrderResult, IProduct, TFormContacts, TFormErrors, TProductCart } from './types';
+import { IApi, IOrder, IOrderResult, IProduct, TFormErrors, TProductCart } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
 
@@ -134,19 +133,28 @@ events.on('modalCart:open', () => {
 
 // Открыть модалку оформления заказа
 events.on('orderForm:open', () => {
-  modalContainer.content = orderForm.render();
+  modalContainer.content = orderForm.render({
+    address: '',
+    valid: false,
+    errors: []
+  });
   modalContainer.render();
 });
 
 // Открыть модалку оформления контактов
 events.on('orderForm:submit', () => {
-  modalContainer.content = contactsForm.render();
+  modalContainer.content = contactsForm.render({
+    email: '',
+    phone: '',
+    valid: false,
+    errors: []
+  });
   modalContainer.render();
 });
 
 // Переключить способ оплаты
 events.on('payment:change', (button: HTMLButtonElement) => {
-  orderForm.togglePaymentButton();
+  orderForm.togglePaymentButton(button.name);
   orderData.setFormOrder('payment', button.name);
 });
 
@@ -184,15 +192,17 @@ events.on('contactsForm:submit', () => {
   api.postOrder(order)
   .then(function (data: IOrderResult) {
     cartData.clearCart();
-
     orderData.clearFormsData();
-    orderForm.clearForm();
-    contactsForm.clearForm();
-    
-    console.log(cartData);
     events.emit('order:success', data);
   })
   .catch(error => console.log(error));
+});
+
+// Очистить формы заказа
+events.on('formData:clear', () => {
+  orderForm.togglePaymentButton('online');
+  orderForm.clearForm();
+  contactsForm.clearForm();
 });
 
 // Открыть модалку с результатом заказа

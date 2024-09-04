@@ -1,4 +1,4 @@
-import { TFormContacts, TFormOrder, IOrder, IOrderData, TFormErrors, TFormInputsData, IFormsData } from "../../types";
+import { IOrderData, TFormErrors, IFormsData } from "../../types";
 import { IEvents } from "../base/events";
 
 export class OrderData implements IOrderData {
@@ -57,6 +57,7 @@ export class OrderData implements IOrderData {
             email: '',
             phone: ''
         }
+        this.events.emit('formData:clear');
     }
 
     get formsData() {
