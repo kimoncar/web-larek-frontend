@@ -23,7 +23,7 @@ export class Cart extends Component<ICartView> {
             });
         }
 
-        this.toggleButton(true);
+        this.disabledButton(true);
         this.emptyCart();
     }
 
@@ -44,7 +44,7 @@ export class Cart extends Component<ICartView> {
         return this._items;
     }
 
-    toggleButton(value: boolean): void {
+    disabledButton(value: boolean): void {
         this.button.disabled = value;
     }
 

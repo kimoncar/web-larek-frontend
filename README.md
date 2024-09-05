@@ -60,7 +60,7 @@ export interface IProduct {
 Интерфейс для типизации форм с данными пользователя
 
 ```
-export interface IForm {
+export interface IFormsData {
     payment: string;
     address: string;
     email: string;
@@ -71,16 +71,21 @@ export interface IForm {
 Интерфейс для типизации заказа
 
 ```
-export interface IOrder extends IForm {
+export interface IOrder extends IFormsData {
     total: number;
     items: string[];
 }
 ```
 
+Данные, карточек продуктов в корзине
+```
+export type TProductCart = Pick<IProduct, 'id' | 'title' | 'price'>;
+```
+
 Данные, вводимые пользователем в формах модальных окон
 
 ```
-export type IFormInputsData = Pick<IOrder, 'address' | 'email' | 'phone'>;
+export type TFormInputsData = Pick<IOrder, 'address' | 'email' | 'phone'>;
 ```
 
 Интерфейс для ответа сервера
@@ -106,8 +111,11 @@ export interface IProductsData {
 
 ```
 export interface IOrderData {
-    setOrder(orderData: IOrder): void;
-    checkValidation(data: Record<keyof IFormInputsData, string>): boolean;
+    setFormOrder(field: keyof TFormInputsData, value: string): void;
+    setFormContacts(field: keyof TFormInputsData, value: string): void;
+    checkValidationFormOrder(): boolean;
+    checkValidationFormContacts(): boolean;
+    clearFormsData(): void;
 }
 ```
 
@@ -115,11 +123,12 @@ export interface IOrderData {
 
 ```
 export interface ICartData {
-    items: Map<string, number>;
-    addProduct(id: string): void;
-    removeProduct(id: string): void;
+    items: TProductCart[];
+    addProduct(item: TProductCart): void;
+    removeProduct(item: TProductCart): void;
     getTotal(): number;
     getSumm(): number;
+    clearCart(): void;
 }
 ```
 
@@ -161,16 +170,21 @@ export interface ICartData {
 Конструктор класса принимает инстант брокера событий.\
 В полях класса хранятся следующие данные:
 - `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
+- `_formsData: IFormsData` - объект с данными форм
+- `formErrors: TFormErrors` - ошибки валидации форм
 
 Также класс предоставляет следующие методы для работы с данными:
-- `setOrder(orderData: IOrder): void` - сохраняет данные заказа
-- `checkOrderValidation(data: Record<keyof IFormInputsData, string>): boolean` - проверяет введенные данные
+- `setFormOrder(field: keyof IFormsData, value: string): void` - сохраняет данные формы адреса и способа оплаты
+- `setFormContacts(field: keyof IFormsData, value: string): void` - сохраняет данные формы контактов
+- `checkValidationFormOrder(): boolean` - проверяет данные формы адреса и способа оплаты
+- `checkValidationFormContacts(): boolean` - проверяет данные формы контактов
+- `clearFormsData(): void` - очистка данных
 
 ### Класс CartData
 Класс реализует интерфейс ICartData и отвечает за хранение и логику работы с товарами корзины.\
 Конструктор класса принимает инстант брокера событий.\
 В полях класса хранятся следующие данные:
-- `items: Map<string, number>` - массив товаров
+- `items: TProductCart[]` - массив товаров
 - `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
 
 Также класс предоставляет следующие методы для работы с данными:
@@ -178,6 +192,7 @@ export interface ICartData {
 - `removeProduct(id: string): void` - удаляет товар из корзины
 - `getTotal(): number` - возвращает количество товаров в корзине
 - `getSumm(): number` - возвращает сумму товаров корзины
+- `clearCart(): void` - очистка данных
 
 ### Слой представления
 Все классы представления отвечают за отображение передаваемых в них данных в контейнере (DOM-элемент).
@@ -191,26 +206,9 @@ constructor(container: HTMLElement)
 ```
 
 Также класс предоставляет следующие методы:
-- `setText(element: HTMLElement, value: string): void` - устанавливает текстовое содержимое элемента;
-- `render(): HTMLElement` - возвращает обновленный корневой DOM-элемент компонента. Принимает необязательный параметр `data`, который можно использовать для обновления свойств компонента.
-
-#### Класс Page
-Расширяет класс Component.\
-Отвечает за отображение блока с карточками товаров и кнопки корзины на главной странице и предоставляет возможность управления содержимым.\
-Конструктор принимает контейнер, в котором размещаются карточки, и объект событий:
-
-```
-constructor(container: HTMLElement, event: IEvents)
-```
-
-Также в конструкторе происходит поиск элемента каталога по его селектору.\
-
-В полях класса хранятся следующие данные:
-- `_container: HTMLElement` - элемент контейнера для карточек;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
-
-Класс предоставляет методы для управления отображением:
-- `set container(items: IProduct[])` - для заполнения карточками товаров;
+- `setText(element: HTMLElement, value: string): void` - устанавливает текстовое содержимое элемента
+- `setImage(element: HTMLImageElement, src: string):void` - устанавливает атрибут src элемента
+- `render(): HTMLElement` - возвращает обновленный корневой DOM-элемент компонента. Принимает необязательный параметр `data`, который можно использовать для обновления свойств компонента
 
 #### Класс Modal
 Расширяет класс Component.\
@@ -223,14 +221,58 @@ constructor(container: HTMLElement, event: IEvents)
 ```
 
 В полях класса хранятся следующие данные:
-- `container: HTMLElement` - контейнер с разметкой модального окна;
-- `_content: HTMLElement` - контент модального окна;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
+- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
+- `closeButton: HTMLButtonElement` - кнопка закрытия модального окна
+- `_content: HTMLElement` - контент модального окна
 
 Также класс предоставляет методы для управления отображением модального окна:
-- `open(): void` - для открытия окна;
-- `close(): void` - для закрытия окна;
-- `set content(content: HTMLElement)` - для сохранения отображаемого контента;
+- `open(): void` - для открытия окна
+- `close(): void` - для закрытия окна
+- `set content(content: HTMLElement)` - для сохранения отображаемого контента
+- `render(): HTMLElement` - возвращает элемент модального окна
+
+#### Класс Form
+Расширяет класс Component.\
+Отвечает за отображение форм и предоставляет возможность управления содержимым.\
+Конструктор принимает контейнер, в котором размещаются карточки, и объект событий:
+
+```
+constructor(container: HTMLElement, event: IEvents)
+```
+
+В полях класса хранятся следующие данные:
+- `_buttonSubmit: HTMLButtonElement` - элемент кнопки отправки формы
+- `_errors: HTMLElement` - элемент ошибки заполнения формы
+- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
+
+Класс предоставляет методы для управления отображением:
+- `onInputChange(field: keyof T, value: string, formName: string)` - обработчик событий ввода в полях форм
+- `clearForm():void` - очистка полей форм
+- `render(): HTMLElement` - возвращает элемент формы
+- `set valid(value: boolean)` - управляет блокировкой кнопки отправки
+
+#### Класс Page
+Расширяет класс Component.\
+Отвечает за отображение блока с карточками товаров и кнопки корзины на главной странице, и предоставляет возможность управления содержимым.\
+Конструктор принимает контейнер, в котором размещаются карточки, и объект событий:
+
+```
+constructor(container: HTMLElement, event: IEvents)
+```
+
+Также в конструкторе происходит поиск элемента каталога по его селектору.\
+
+В полях класса хранятся следующие данные:
+- `_catalog: HTMLElement` - элемент каталога карточек на странице
+- `wrapper: HTMLElement` - тело страницы
+- `cartButton: HTMLButtonElement` - кнопка корзины в шапке
+- `_cartCounter: HTMLElement` - счетчик у кнопки корзины в шапке
+- `events: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
+
+Класс предоставляет методы для управления отображением:
+- `set catalog(items: HTMLElement[])` - для заполнения карточками товаров
+- `set cartCounter(value: number)` - установка значения счетчика
+- `set locked(value: boolean)` - установка/удаление класса блокировки страницы
 
 #### Класс Product
 Расширяет класс Component.\
@@ -238,21 +280,24 @@ constructor(container: HTMLElement, event: IEvents)
 Конструктор принимает шаблон карточки, объект событий и обработчик клика:
 
 ```
-constructor(content: HTMLElement, event: IEvents, handler?: Function)
+constructor(container: HTMLElement, events: IEvents, actions?: IActions)
 ```
 
 В полях класса хранятся следующие данные:
-- `container: HTMLElement` - контейнер с разметкой элемента товара;
-- `title: HTMLElement` - название товара;
-- `image: HTMLImageElement` - изображение товара;
-- `price: HTMLElement` - стоимость товара;
-- `category: HTMLElement` - категория товара;
-- `description?: HTMLElement` - описание товара;
-- `button?: HTMLButtonElement` - кнопка добавления в корзину;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
+- `title: HTMLElement` - название товара
+- `image: HTMLImageElement` - изображение товара
+- `price: HTMLElement` - стоимость товара
+- `category: HTMLElement` - категория товара
+- `description?: HTMLElement` - описание товара
+- `_index?: HTMLElement` - индекс товара в корзине
+- `button?: HTMLButtonElement` - кнопка добавления в корзину
+- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
 
 Также класс предоставляет методы для управления отображением карточки товара:
-- `lockSale(product: IProduct): string` - устанавливает атрибут disable и меняет надпись кнопке добавления в корзину; 
+- `disabledButton(value: number | null): void` - устанавливает атрибут disable кнопке добавления в корзину
+- `setButtonText(value: string)` - устанавливает текст на кнопке
+
+А также содержит сеттеры для сохранения данных в поля класса. 
 
 #### Класс Cart
 Расширяет класс Component.\
@@ -265,61 +310,49 @@ constructor(container: HTMLElement, event: IEvents)
 ```
 
 В полях класса хранятся следующие данные:
-- `container: HTMLElement` - шаблон корзины;
-- `cartList: HTMLElement` - контейнер списка товаров;
-- `_cartItems: HTMLElement[]` - массив элементов товаров;
-- `_totalSumm: HTMLElement` - общая сумма товаров;
-- `button: HTMLButtonElement` - кнопка оформления заказа;
-- `headerCartButton: HTMLButtonElement` - элемент кнопки корзины в шапке;
-- `_headerCartCounter: HTMLElement` - значок с количеством товара в корзине в шапке;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
+- `cartList: HTMLElement` - контейнер списка товаров
+- `_items: HTMLElement[]` - массив элементов товаров
+- `_totalSumm: HTMLElement` - общая сумма товаров
+- `button: HTMLButtonElement` - кнопка оформления заказа
+- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
 
 Также класс предоставляет методы для управления отображением корзины:
-- `set cartItems(items: HTMLElement[]): void` - устанавливает элементы товаров, добавленных в корзину, в контейнер списка товаров. При отсутствии товаров блокирует кнопку оформления.
-- `set totalSumm(total: number): void` - устанавливает сумму товаров в корзине;
-- `set cartCounter(value: number)` - устанавливает значения счетчика товаров в корзине в шапке;
+- `disabledButton(value: boolean): void` - блокирует кнопку перехода к оформлению заказа
+- `emptyCart(): void` - устанавливает надпись об отсутсвии товара в корзине
+А также содержит сеттеры и геттеры для сохранения и получения данных полей класса. 
 
-#### Класс Order
-Расширяет класс Component.\
+#### Класс OrderForm
+Расширяет класс Form.\
 Предназначен для отображения формы оформления заказа: выбор способа оплаты и ввод адреса.\
-Класс в конструкторе устанавливает слушатель на кнопки выбора метода оплаты, сабмит формы и ввод адреса.\
-Конструктор принимает шаблон формы и объект событий:
+Класс в конструкторе устанавливает слушатель на кнопки выбора метода оплаты и ввод адреса.\
+Конструктор принимает шаблон формы, объект событий и обработчик действия:
 
 ```
-constructor(container: HTMLElement, event: IEvents)
+constructor(container: HTMLFormElement, events: IEvents, actions?: IActions)
 ```
 
 В полях класса хранятся следующие данные:
-- `container: HTMLFormElement` - шаблон формы оформления заказа;
-- `paymentOnline: HTMLButtonElement` - элемент кнопки оплаты онлайн;
-- `paymentCash: HTMLButtonElement` - элемент кнопки оплаты при получении;
-- `buttonSubmit: HTMLButtonElement` - кнопка сабмита формы;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
+- `_buttonPaymentOnline: HTMLButtonElement` - элемент кнопки оплаты онлайн
+-  `_buttonPaymentCash: HTMLButtonElement` - элемент кнопки оплаты при получении
+-  `events: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
+-  `actions: IActions` - обработчик действия
 
-Также класс предоставляет следующие методы:
-- `set selectedPayment(payment: string): void` - устанавливает стилизацию выбранному методу оплаты;
-- `set valid(value: boolean): void` - блокирует/активирует кнопку сабмита формы;
+Также класс предоставляет метод:
+- `togglePaymentButton(name:string):void` - переключает класс кнопок способа оплаты
 
-#### Класс Contacts
-Расширяет класс Component.\
+#### Класс ContactsForm
+Расширяет класс Form.\
 Предназначен для отображения формы ввода контактов: ввод email и телефона.\
-Класс в конструкторе устанавливает слушатель на кнопку сабмита формы, поля ввода email и телефона.\
 Конструктор принимает шаблон формы и объект событий:
 
 ```
 constructor(container: HTMLElement, event: IEvents)
 ```
 
-В полях класса хранятся следующие данные:
-- `container: HTMLFormElement` - шаблон формы оформления контактов;
-- `inputs: HTMLInputElement[]` - массив полей ввода данных;
-- `buttonSubmit: HTMLButtonElement` - кнопка сабмита формы;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
+В полях класса хранится:
+-  `events: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных
 
-Также класс предоставляет следующие методы:
-- `set valid(value: boolean): void` - блокирует/активирует кнопку перехода к следующей форме;
-
-#### Класс OrderResult
+#### Класс Success
 Расширяет класс Component.\
 Предназначен для отображения ответа сервера.\
 Класс в конструкторе устанавливает слушатель на кнопку.\
@@ -330,10 +363,12 @@ constructor(container: HTMLElement, event: IEvents)
 ```
 
 В полях класса хранятся следующие данные:
-- `container: HTMLElement` - шаблон формы оформления контактов;
-- `description: HTMLInputElement` - элемент для отображения результата оформленного заказа;
-- `button: HTMLButtonElement` - кнопка закрытия окна;
-- `event: IEvents` - экземпляр класса EventEmmiter для инициализации событий при изменении данных.
+- `_description: HTMLElement` - элемент для отображения результата оформленного заказа
+-  `button: HTMLButtonElement` кнопка закрытия окна
+-  `actions: IActions` - обработчик действия
+
+Содержит метод
+`set description(value: number)` - устанавливает сообщение о результате заказа
 
 ### Слой коммуникации
 #### Класс AppApi
@@ -346,21 +381,25 @@ constructor(container: HTMLElement, event: IEvents)
 В файле `index.ts` сначала создаются экземляры необходимых классов, а затем настраивается обработка событий. 
 
 #### Список событий, которые могут генерироваться в системе
-##### События изменения данных (генерируются моделями данных)
-- `products:changed` - изменение массива карточек с товарами;
-- `product:preview` - изменение данных при открытии карточки товара;
-- `cart:changed` - изменение данных корзины;
-- `cartCounter:changed` - изменение счетчика корзины;
-- `cartItems:changed` - изменение списка товаров корзины;
-- `formAddress:changed` - изменение поля с адресом;
-- `formError:address` - ошибка валидации поля с адресом;
+- `products:changed` - изменение массива карточек с товарами
+- `product:select` - изменение данных при открытии карточки товара
+- `cart:changed` - изменение данных корзины
+- `cartItems:changed` - изменение списка товаров корзины
+- `formError:changed` - изменение поля с адресом
+- `formData:clear` - очистка форм
+- `formError:done` - форма заполнена верно
+- `initialData:loaded` - загрузка данных с сервера
 
-##### События, возникающие при взаимодествии пользователя с интерфейсом (генерируются классами представления)
-- `modal:open` - открытие модального окна;
-- `modal:close` - закрытие модального окна;
-- `cart:open` - открытие корзины;
+- `modal:open` - открытие модального окна
+- `modal:close` - закрытие модального окна
+- `modalProduct:open` - открытие модального окна с товаром
+- `orderForm:open` - открытие модального окна с вводом адреса и способом оплаты
+- `orderForm:change` - обновления информации формы с адресом
+- `contactsForm:change` - обновления информации формы с контактами
+- `orderForm:submit` - переход к этапу заполнения контактов
+- `modalCart:open` - открытие корзины;
 - `cartItem:add` - добавление товара в корзину;
 - `cartItem:remove` - удаление товара из корзины;
-- `order:payment` - выбор способа оплаты;
-- `order:changedAddress` - изменение поля с адресом;
-- `contacts:input` - изменение поля с данными;
+- `cart:change` - изменение отображения корзины и счетчика
+- `payment:change` - выбор способа оплаты;
+- `order:success` - показать результат оформления заказа

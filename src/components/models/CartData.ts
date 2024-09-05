@@ -35,7 +35,7 @@ export class CartData implements ICartData {
         return totalSumm;
     }
 
-    clearCart() {
+    clearCart(): void {
         this._items = [];
         this.events.emit('cart:change', this._items);
     }

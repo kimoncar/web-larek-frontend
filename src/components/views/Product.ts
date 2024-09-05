@@ -86,5 +86,3 @@ export class Product extends Component<IProduct> {
         }
     }
 }
-
-export { IActions };

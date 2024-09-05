@@ -122,7 +122,7 @@ events.on('cart:change', (items: TProductCart[]) => {
 
     const totalSummCart = cartData.getSumm();
     cart.totalSumm = totalSummCart;
-    cart.toggleButton(totalSummCart === 0);
+    cart.disabledButton(totalSummCart === 0);
     page.cartCounter = cartData.getTotal();
 });
 
