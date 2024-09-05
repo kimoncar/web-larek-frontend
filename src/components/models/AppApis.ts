@@ -1,5 +1,5 @@
 import { IApi, IOrder, IOrderResult, IProduct } from "../../types";
-import { ApiListResponse } from "./api";
+import { ApiListResponse } from "../base/api";
 
 export class AppApi {
     private _baseApi: IApi;

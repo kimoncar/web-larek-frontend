@@ -6,6 +6,8 @@
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
 - src/components/base/ — папка с базовым кодом
+- src/components/models — папка с классами моделей
+- src/components/views — папка с классами отображения
 
 #### Важные файлы:
 - src/pages/index.html — HTML-файл главной страницы
