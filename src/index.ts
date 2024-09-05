@@ -12,7 +12,7 @@ import { Page } from './components/views/Page';
 import { Product } from './components/views/Product';
 import { Success } from './components/views/Success';
 import './scss/styles.scss';
-import { IApi, IOrder, IOrderResult, IProduct, TFormErrors, TProductCart } from './types';
+import { IApi, IOrderResult, IProduct, TFormErrors, TProductCart } from './types';
 import { API_URL, CDN_URL, settings } from './utils/constants';
 import { cloneTemplate } from './utils/utils';
 

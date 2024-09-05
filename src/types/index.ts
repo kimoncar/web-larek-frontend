@@ -20,18 +20,18 @@ export interface IOrder extends IFormsData {
     items: string[];
 }
 
+export type TProductCart = Pick<IProduct, 'id' | 'title' | 'price'>;
+export type TFormOrder = Pick<IFormsData, 'address' | 'payment'>;
+export type TFormContacts = Pick<IFormsData, 'email' | 'phone'>;
+export type TFormInputsData = Pick<IFormsData, 'address' | 'email' | 'phone'>;
+
+export type TFormErrors = Partial<Record<keyof TFormInputsData, string>>;
+
 export interface IOrderResult {
     id?: string;
     total?: number;
     error?: string;
 }
-
-export type TProductCart = Pick<IProduct, 'id' | 'title' | 'price'>;
-export type TFormOrder = Pick<IOrder, 'address' | 'payment'>;
-export type TFormContacts = Pick<IOrder, 'email' | 'phone'>;
-export type TFormInputsData = Pick<IOrder, 'address' | 'email' | 'phone'>;
-
-export type TFormErrors = Partial<Record<keyof TFormInputsData, string>>;
 
 export interface IProductsData {
     items: IProduct[];
