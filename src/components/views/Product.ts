@@ -1,10 +1,6 @@
-import { IProduct } from "../../types";
+import { IActions, IProduct } from "../../types";
 import { IEvents } from "../base/events";
 import { Component } from "./common/Component";
-
-export interface IActions {
-    onClick: (event: MouseEvent) => void;
-}
 
 export class Product extends Component<IProduct> {
     protected events: IEvents;
@@ -90,3 +86,5 @@ export class Product extends Component<IProduct> {
         }
     }
 }
+
+export { IActions };

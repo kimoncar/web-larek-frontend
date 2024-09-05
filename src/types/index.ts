@@ -15,7 +15,7 @@ export interface IFormsData {
     phone: string;
 }
 
-export interface IOrder extends IFormsData{
+export interface IOrder extends IFormsData {
     total: number;
     items: string[];
 }
@@ -62,4 +62,32 @@ export interface IApi {
     baseUrl: string;
     get<T>(uri: string): Promise<T>;
     post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+
+export interface IForm {
+    valid: boolean;
+    errors: string[];
+}
+
+export interface IModal {
+    container: HTMLElement;
+    content: HTMLElement;
+}
+
+export interface ICartView {
+    cartList: HTMLElement;
+    _items: HTMLElement[];
+    _totalSumm: HTMLElement;
+    button: HTMLButtonElement;
+}
+
+export interface IPage {
+    _catalog: HTMLElement[];
+    wrapper: HTMLElement;
+    cartButton: HTMLButtonElement;
+    _cartCounter: HTMLElement;
+}
+
+export interface IActions {
+    onClick: (event: MouseEvent) => void;
 }

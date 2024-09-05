@@ -1,12 +1,6 @@
+import { IPage } from "../../types";
 import { IEvents } from "../base/events";
 import { Component } from "./common/Component";
-
-interface IPage {
-    _catalog: HTMLElement[];
-    wrapper: HTMLElement;
-    cartButton: HTMLButtonElement;
-    _cartCounter: HTMLElement;
-}
 
 export class Page extends Component<IPage> {
     protected _catalog: HTMLElement;

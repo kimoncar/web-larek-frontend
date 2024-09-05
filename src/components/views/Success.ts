@@ -1,6 +1,5 @@
-import { IOrderResult } from "../../types";
+import { IActions, IOrderResult } from "../../types";
 import { Component } from "./common/Component";
-import { IActions } from "./Product";
 
 export class Success extends Component<IOrderResult> {
     protected _description: HTMLElement;
