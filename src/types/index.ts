@@ -21,8 +21,6 @@ export interface IOrder extends IFormsData {
 }
 
 export type TProductCart = Pick<IProduct, 'id' | 'title' | 'price'>;
-export type TFormOrder = Pick<IFormsData, 'address' | 'payment'>;
-export type TFormContacts = Pick<IFormsData, 'email' | 'phone'>;
 export type TFormInputsData = Pick<IFormsData, 'address' | 'email' | 'phone'>;
 
 export type TFormErrors = Partial<Record<keyof TFormInputsData, string>>;

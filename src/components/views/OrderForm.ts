@@ -1,8 +1,8 @@
-import { IActions, TFormOrder } from "../../types";
+import { IActions, IFormsData } from "../../types";
 import { IEvents } from "../base/events";
 import { Form } from "./common/Form";
 
-export class OrderForm extends Form<TFormOrder> {
+export class OrderForm extends Form<IFormsData> {
     protected _buttonPaymentOnline: HTMLButtonElement;
     protected _buttonPaymentCash: HTMLButtonElement;
     protected events: IEvents;
